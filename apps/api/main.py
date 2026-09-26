@@ -1,7 +1,6 @@
 import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
-from pathlib import Path
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
@@ -23,8 +22,6 @@ from goalcoach.infrastructure.persistence.repositories import (
     SqlAlchemyLearnerRepository,
 )
 from goalcoach.infrastructure.telemetry import bind_request_id, reset_request_id
-
-WEB_BUILD_DIRECTORY = Path("apps/web/dist")
 
 
 def create_app(settings: Settings | None = None) -> FastAPI:
@@ -96,16 +93,6 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     @application.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
-
-    # Serve the Vite build (Vercel promotes it to the CDN). Registered last and at
-    # low priority, so every API route above still wins. Only registered once the
-    # build output exists, which keeps local runs and tests working.
-    if WEB_BUILD_DIRECTORY.is_dir():
-        application.frontend(
-            "/",
-            directory=WEB_BUILD_DIRECTORY,
-            fallback="index.html",
-        )
 
     return application
 

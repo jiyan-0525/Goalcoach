@@ -17,6 +17,7 @@ from goalcoach.infrastructure.config import Settings
 CONTENT_DUMP_PATH = (
     "data/database1/GoalCoach_HSK1_Learning_DB_Package/data/goalcoach_hsk1_learning_db_sqlite.sql"
 )
+PROJECT_ROOT = Path(__file__).resolve().parents[2]
 
 
 def prepare_databases(settings: Settings) -> None:
@@ -30,7 +31,7 @@ def prepare_databases(settings: Settings) -> None:
     learner_database = writable_root / "goalcoach.db"
     content_database = writable_root / "goalcoach_content.db"
 
-    seed_content_database(content_database, Path(CONTENT_DUMP_PATH))
+    seed_content_database(content_database, PROJECT_ROOT / CONTENT_DUMP_PATH)
 
     settings.database_url = f"sqlite:///{learner_database}"
     settings.content_database_url = f"sqlite:///{content_database}"

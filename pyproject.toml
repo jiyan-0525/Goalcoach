@@ -15,7 +15,9 @@ dependencies = [
   "opentelemetry-api<1.44.0",
   "opentelemetry-sdk<1.44.0",
   "pydantic>=2.8,<3",
-  "pydantic-ai>=0.0.14",
+  # 2.x removed the Agent(output_retries=...) argument used by grader_component,
+  # so the upper bound keeps fresh resolves on the 1.x line pinned in uv.lock.
+  "pydantic-ai>=0.0.14,<2",
   "pydantic-settings>=2.4,<3",
   "pytest>=8.4.2",
   "pytest-asyncio>=0.26.0",
@@ -56,11 +58,3 @@ ignore = [
 
 [project.scripts]
 goalcoach = "goalcoach.agents.terminal_harness:run_cli"
-
-# Vercel serves the FastAPI app and the Vite build from one project, so frontend
-# requests stay same-origin and no CORS configuration is required.
-[tool.vercel]
-entrypoint = "apps.api.main:app"
-
-[tool.vercel.scripts]
-build = "npm --prefix apps/web ci && npm --prefix apps/web run build"
