@@ -45,7 +45,11 @@ def seed_content_database(target: Path, dump_path: Path) -> None:
         return
 
     if not dump_path.is_file():
-        raise FileNotFoundError(f"Curriculum SQL dump not found at {dump_path}")
+        raise FileNotFoundError(
+            f"Curriculum SQL dump not found at {dump_path} "
+            f"(cwd={Path.cwd()}). It must be bundled with the function; check the "
+            f"includeFiles entry for the api function in vercel.json."
+        )
 
     staging = target.with_suffix(".db.building")
     staging.unlink(missing_ok=True)
