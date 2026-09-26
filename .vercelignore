@@ -6,7 +6,9 @@
 tests
 docs
 Proposal
+.env*
 apps/web/node_modules
+apps/web/dist
 data/database1/GoalCoach_HSK1_Learning_DB_Package.zip
 **/__pycache__
 **/*.pyc

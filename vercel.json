@@ -1,13 +1,9 @@
 {
   "$schema": "https://openapi.vercel.sh/vercel.json",
-  "framework": null,
-  "installCommand": "pip install --no-cache-dir .",
-  "buildCommand": "npm --prefix apps/web ci && npm --prefix apps/web run build",
-  "outputDirectory": "apps/web/dist",
+  "buildCommand": "npm --prefix apps/web ci && npm --prefix apps/web run build && rm -rf public && cp -r apps/web/dist public",
   "functions": {
-    "api/*.py": {
-      "maxDuration": 60,
-      "includeFiles": "{apps/**/*.py,data/database1/GoalCoach_HSK1_Learning_DB_Package/data/*.sql}"
+    "apps/api/main.py": {
+      "maxDuration": 60
     }
   }
 }

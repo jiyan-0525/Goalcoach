@@ -58,3 +58,6 @@ ignore = [
 
 [project.scripts]
 goalcoach = "goalcoach.agents.terminal_harness:run_cli"
+
+[tool.vercel]
+entrypoint = "apps.api.main:app"
