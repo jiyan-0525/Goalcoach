@@ -56,3 +56,11 @@ ignore = [
 
 [project.scripts]
 goalcoach = "goalcoach.agents.terminal_harness:run_cli"
+
+# Vercel serves the FastAPI app and the Vite build from one project, so frontend
+# requests stay same-origin and no CORS configuration is required.
+[tool.vercel]
+entrypoint = "apps.api.main:app"
+
+[tool.vercel.scripts]
+build = "npm --prefix apps/web ci && npm --prefix apps/web run build"

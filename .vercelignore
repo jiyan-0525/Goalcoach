@@ -1,0 +1,13 @@
+.venv
+.git
+.github
+.agents
+.opencode
+tests
+docs
+Proposal
+apps/web/node_modules
+apps/web/dist
+data/database1/GoalCoach_HSK1_Learning_DB_Package.zip
+**/__pycache__
+**/*.pyc

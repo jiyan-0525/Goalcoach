@@ -1,12 +1,14 @@
 import re
 from collections.abc import AsyncIterator
 from contextlib import asynccontextmanager
+from pathlib import Path
 from uuid import uuid4
 
 from fastapi import FastAPI, Request
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 
+from apps.api.bootstrap import prepare_databases
 from apps.api.routes.learning import router as learning_router
 from apps.api.routes.learning_loop import router as learning_loop_router
 from goalcoach.infrastructure.config import Settings
@@ -22,6 +24,8 @@ from goalcoach.infrastructure.persistence.repositories import (
 )
 from goalcoach.infrastructure.telemetry import bind_request_id, reset_request_id
 
+WEB_BUILD_DIRECTORY = Path("apps/web/dist")
+
 
 def create_app(settings: Settings | None = None) -> FastAPI:
     """Build the API with explicitly configured persistence dependencies."""
@@ -29,6 +33,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
 
     @asynccontextmanager
     async def lifespan(application: FastAPI) -> AsyncIterator[None]:
+        prepare_databases(resolved_settings)
         session_factory = create_session_factory(resolved_settings.database_url)
         content_session_factory = create_session_factory(resolved_settings.content_database_url)
         try:
@@ -83,18 +88,24 @@ def create_app(settings: Settings | None = None) -> FastAPI:
         allow_headers=["*"],
     )
 
-    # Routers
-    # application.include_router(learning_router)
-    # application.include_router(learning_loop_router)
+    # Routers already carry their full paths, so no prefix is added here.
+    application.include_router(learning_router)
+    application.include_router(learning_loop_router)
 
-    # Router mit Präfix einbinden:
-    application.include_router(learning_router, prefix="/api/v1")
-    application.include_router(learning_loop_router, prefix="/api/v1")
-    
     # Health check
     @application.get("/health")
     async def health() -> dict[str, str]:
         return {"status": "ok"}
+
+    # Serve the Vite build (Vercel promotes it to the CDN). Registered last and at
+    # low priority, so every API route above still wins. Only registered once the
+    # build output exists, which keeps local runs and tests working.
+    if WEB_BUILD_DIRECTORY.is_dir():
+        application.frontend(
+            "/",
+            directory=WEB_BUILD_DIRECTORY,
+            fallback="index.html",
+        )
 
     return application
 
