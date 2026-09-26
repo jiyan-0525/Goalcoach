@@ -84,9 +84,12 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     )
 
     # Routers
-    application.include_router(learning_router)
-    application.include_router(learning_loop_router)
+    # application.include_router(learning_router)
+    # application.include_router(learning_loop_router)
 
+    application.include_router(learning_router, prefix="/api/v1")
+    application.include_router(learning_loop_router, prefix="/api/v1")
+    
     # Health check
     @application.get("/health")
     async def health() -> dict[str, str]:
