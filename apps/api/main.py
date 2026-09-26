@@ -87,6 +87,7 @@ def create_app(settings: Settings | None = None) -> FastAPI:
     # application.include_router(learning_router)
     # application.include_router(learning_loop_router)
 
+    # Router mit Präfix einbinden:
     application.include_router(learning_router, prefix="/api/v1")
     application.include_router(learning_loop_router, prefix="/api/v1")
     
